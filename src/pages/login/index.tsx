@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+
 
 import {
     Text, 
@@ -17,7 +19,9 @@ import { themas } from "../../global/themes";
 export default function Login(){
     const [email,setEmail] = useState('');
     const [password,setPassword] = useState('');
-    const [loading,setLoading] = useState(false)
+    const [loading,setLoading] = useState(false);
+    const navigation = useNavigation();
+
 
 
     async function getLogin(){
@@ -81,7 +85,10 @@ export default function Login(){
                     {loading?<ActivityIndicator />:<Text style={style.textButton}>Entrar</Text>}
                 </TouchableOpacity>
             </View>
-            <Text style={style.textBottom}>Não tem conta? <Text style={{color:themas.colors.primary}}>Crie Agora!</Text></Text>
+            <Text style={style.textBottom}>Não tem conta? </Text>
+                <TouchableOpacity onPress={() => navigation.navigate("Cadastro")}>
+                <Text style={{color: themas.colors.primary}}>Criar uma conta</Text>
+            </TouchableOpacity>
         </View>
     )
 }

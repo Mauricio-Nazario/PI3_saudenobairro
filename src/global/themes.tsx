@@ -4,6 +4,10 @@ export const themas = {
         secondary:'#ffffff',
         lightGray:'#d7d8d7',
         gray:'gray',
-        bgScreen:'#f1f7fa'
+        bgScreen:'#f1f7fa',
+        background: '#ffffff',
+        input: '#f2f2f2',
+        text: '#333333',
+        white: '#ffffff',
     }
 }
