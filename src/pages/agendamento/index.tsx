@@ -12,7 +12,7 @@ export default function Agendamento() {
   const [medico, setMedico] = useState("");
 
   const handleConfirmar = () => {
-    // Aqui você pode salvar os dados ou navegar
+    {/*Aqui você pode salvar os dados ou navegar*/}
     console.log({ data, horario, especialidade, medico });
     alert("Agendamento realizado com sucesso!");
   };

@@ -30,16 +30,21 @@ export default function Login(){
             if(!email || !password){
                 return Alert.alert('Atenção','Informe os campos obrigatórios')
             }
-
-            setTimeout(()=>{
-                Alert.alert('Logado com sucesso!')
+    
+            setTimeout(() => {
                 setLoading(false)
-            },3000)
-
-        }catch (error) {
-            console.log('Erro')
+                Alert.alert('Sucesso', 'Logado com sucesso!', [
+                    {
+                        text: 'OK',
+                        onPress: () => navigation.navigate('Agendamento')
+                    }
+                ]);
+            }, 3000)
+    
+        } catch (error) {
+            Alert.alert('Erro', 'Falha no login')
+            setLoading(false)
         }
-        
     }
 
     return(
@@ -82,7 +87,7 @@ export default function Login(){
             </View>
             <View style={style.boxBotton}>
                 <TouchableOpacity style={style.button} onPress={()=>getLogin()}>
-                    {loading?<ActivityIndicator />:<Text style={style.textButton}>Entrar</Text>}
+                    {loading ? <ActivityIndicator color={themas.colors.primary} /> : <Text style={style.textButton}>Entrar</Text>}
                 </TouchableOpacity>
             </View>
             <Text style={style.textBottom}>Não tem conta? </Text>
