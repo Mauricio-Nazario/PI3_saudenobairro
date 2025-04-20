@@ -2,65 +2,69 @@ import { StyleSheet } from "react-native";
 import { themas } from "../../global/themes";
 
 export const style = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: themas.colors.background,
-        padding: 20,
-        justifyContent: 'center'
+  container: {
+    flexGrow: 1,
+    backgroundColor: themas.colors.background || "#fff",
+    padding: 20,
+    justifyContent: 'center',
+  },
+  boxTop: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  text: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: themas.colors.primary,
+  },
+  boxMid: {
+    marginBottom: 20,
+  },
+  titleInput: {
+    fontSize: 14,
+    color: themas.colors.gray,
+    marginBottom: 4,
+    marginTop: 10,
+    alignSelf:'flex-start',
+    paddingLeft: 8,
+  },
+  BoxInput: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: themas.colors.input || "#f2f2f2",
+    paddingHorizontal: 12,
+    borderRadius: 16, 
+    marginBottom: 8,
+  },
+  input: {
+    flex: 1,
+    paddingVertical: 10,
+    color: themas.colors.text || "#333",
+  },
+  boxBotton: {
+    marginTop: 10,
+    alignItems:'center',
+  },
+  button:{
+    width:250,
+    height:50,
+    alignItems:'center',
+    justifyContent:'center',
+    backgroundColor:themas.colors.primary,
+    borderRadius:40,
+    shadowColor: "#000",
+    shadowOffset: {
+	    width: 0,
+	    height: 3,
     },
-    boxTop: {
-        alignItems: 'center',
-        marginBottom: 20
-    },
-    logo: {
-        width: 100,
-        height: 100,
-        marginBottom: 10
-    },
-    text: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: themas.colors.primary
-    },
-    boxMid: {
-        marginVertical: 20
-    },
-    titleInput: {
-        fontSize: 14,
-        color: themas.colors.gray,
-        marginBottom: 4,
-        marginTop: 12
-    },
-    BoxInput: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: themas.colors.input,
-        paddingHorizontal: 10,
-        borderRadius: 8,
-        marginBottom: 5
-    },
-    input: {
-        flex: 1,
-        paddingVertical: 10,
-        color: themas.colors.text
-    },
-    boxBotton: {
-        marginTop: 20
-    },
-    button: {
-        backgroundColor: themas.colors.primary,
-        padding: 15,
-        borderRadius: 8,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    textButton: {
-        color: themas.colors.white,
-        fontWeight: 'bold'
-    },
-    textBottom: {
-        textAlign: 'center',
-        marginTop: 20,
-        color: themas.colors.gray
-    }
+    shadowOpacity: 0.29,
+    shadowRadius: 4.65,
+    elevation: 7,
+  },
+  textButton: {
+    color: themas.colors.white || "#fff",
+    fontWeight: 'bold',
+  },
 });
+
+
