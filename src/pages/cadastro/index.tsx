@@ -31,7 +31,7 @@ export default function Cadastro() {
         setLoading(true);
         setTimeout(() => {
             setLoading(false);
-            // ALTERAÇÃO PRINCIPAL AQUI ↓
+            {/* ALTERAÇÃO PRINCIPAL AQUI */}
             navigation.navigate('Senha', {
                 dadosCadastro: {
                     nome,
@@ -110,7 +110,7 @@ export default function Cadastro() {
                     {loading ? (
                         <ActivityIndicator color="#FFF" />
                     ) : (
-                        <Text style={style.textButton}>Cadastrar</Text>
+                        <Text style={style.textButton}>Próximo</Text>
                     )}
                 </TouchableOpacity>
 

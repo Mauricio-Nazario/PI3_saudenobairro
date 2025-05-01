@@ -11,8 +11,8 @@ export const style = StyleSheet.create({
             flexDirection:'row',
             alignItems:'center',
             paddingHorizontal:5,
-            backgroundColor:themas.colors.lightGray,
-            borderColor:themas.colors.lightGray,
+            backgroundColor:themas.colors.grayLight,
+            borderColor:themas.colors.grayLight,
         },
         input:{
             width:'90%',

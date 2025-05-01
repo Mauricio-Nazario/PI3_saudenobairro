@@ -10,6 +10,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CalendarPicker from "react-native-calendar-picker";
 import { Picker } from "@react-native-picker/picker";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -17,11 +18,22 @@ import { style } from "./styles";
 import { themas } from "../../global/themes";
 import Logo from "../../assets/logo.png";
 
+
+type RootStackParamList = {
+  Home: undefined;
+  Agendamento: undefined;
+};
+
+type AgendamentoScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'Agendamento'
+>;
+
 export default function Agendamento() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<AgendamentoScreenNavigationProp>();
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [mostrarCalendario, setMostrarCalendario] = useState(false); // 👈 dropdown
+  const [mostrarCalendario, setMostrarCalendario] = useState(false);
   const [selectedTime, setSelectedTime] = useState("");
   const [especialidade, setEspecialidade] = useState("");
   const [medico, setMedico] = useState("");
@@ -59,12 +71,11 @@ export default function Agendamento() {
         <View style={style.boxMid}>
           {/* Dropdown de Data */}
           <Text style={style.titleInput}>SELECIONE A DATA</Text>
-
           <TouchableOpacity
-            style={style.BoxInput}
+            style={style.selectContainer}
             onPress={() => setMostrarCalendario(!mostrarCalendario)}
           >
-            <Text style={style.input}>
+            <Text style={style.selectText}>
               {selectedDate
                 ? selectedDate.toLocaleDateString()
                 : "Selecionar data"}
@@ -106,15 +117,11 @@ export default function Agendamento() {
 
           {/* Picker de Horário */}
           <Text style={style.titleInput}>SELECIONE O HORÁRIO</Text>
-          <View style={[style.BoxInput, { paddingHorizontal: 0 }]}>
+          <View style={style.selectContainer}>
             <Picker
               selectedValue={selectedTime}
               onValueChange={(itemValue) => setSelectedTime(itemValue)}
-              style={{
-                flex: 1,
-                color: themas.colors.text,
-                marginLeft: 10
-              }}
+              style={style.picker}
               dropdownIconColor={themas.colors.gray}
             >
               <Picker.Item label="Selecione um horário" value="" />
@@ -132,10 +139,11 @@ export default function Agendamento() {
 
           {/* Especialidade */}
           <Text style={style.titleInput}>ESPECIALIDADE MÉDICA</Text>
-          <View style={style.BoxInput}>
+          <View style={style.selectContainer}>
             <TextInput
-              style={style.input}
+              style={style.selectText}
               placeholderTextColor={themas.colors.gray}
+              placeholder="Selecione a especialidade"
               value={especialidade}
               onChangeText={setEspecialidade}
             />
@@ -144,10 +152,11 @@ export default function Agendamento() {
 
           {/* Médico */}
           <Text style={style.titleInput}>NOME DO MÉDICO</Text>
-          <View style={style.BoxInput}>
+          <View style={style.selectContainer}>
             <TextInput
-              style={style.input}
+              style={style.selectText}
               placeholderTextColor={themas.colors.gray}
+              placeholder="Selecione o médico"
               value={medico}
               onChangeText={setMedico}
             />
@@ -164,13 +173,12 @@ export default function Agendamento() {
             <Text style={style.textButton}>Confirmar Agendamento</Text>
           </TouchableOpacity>
 
+          {/* BOTÃO ATUALIZADO AQUI ↓ */}
           <TouchableOpacity
-            style={{ marginTop: 15 }}
-            onPress={() => navigation.goBack()}
+            style={style.backButton}
+            onPress={() => navigation.navigate('Home')}
           >
-            <Text style={style.textBottom}>
-              Voltar para <Text style={{ color: themas.colors.primary }}>Home</Text>
-            </Text>
+            <Text style={style.backButtonText}>Voltar para Home</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
