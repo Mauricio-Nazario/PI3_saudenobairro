@@ -3,45 +3,91 @@ import { themas } from "../../global/themes";
 
 export const style = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1, 
     backgroundColor: themas.colors.background,
     padding: 20,
-    justifyContent: "center",
   },
-  title: {
-    fontSize: 24,
-    color: themas.colors.text,
+  boxTop: {
+    alignItems: "center",
     marginBottom: 20,
-    textAlign: "center",
+  },
+  logo: {
+    width: 80,
+    height: 80,
+  },
+  text: {
+    fontSize: 24,
     fontWeight: "bold",
+    color: themas.colors.primary,
+    marginTop: 10,
+  },
+  boxMid: {
+    marginBottom: 20,
+  },
+  titleInput: {
+    fontSize: 14,
+    color: themas.colors.gray,
+    marginBottom: 4,
+    marginTop: 10,
+    paddingLeft: 8,
+    alignSelf: "flex-start", 
+  },
+  BoxInput: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: themas.colors.input,
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    marginBottom: 8,
+  },
+  calendarContainer: {
+    backgroundColor: themas.colors.input,
+    borderRadius: 16,
+    padding: 10,
+    marginBottom: 8,
+    height: 260, 
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  pickerContainer: {
+    flex: 1,
+    height: 50,
+  },
+  picker: {
+    color: themas.colors.text,
   },
   input: {
-    height: 50,
-    backgroundColor: themas.colors.input,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    fontSize: 16,
+    flex: 1,
+    paddingVertical: 10,
     color: themas.colors.text,
-    marginBottom: 12,
+  },
+  boxBotton: {
+    marginTop: 20,
+    alignItems: "center",
   },
   button: {
+    width: 250,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: themas.colors.primary,
-    padding: 16,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 10,
+    borderRadius: 40,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.29,
+    shadowRadius: 4.65,
+    elevation: 7,
   },
-  buttonText: {
+  textButton: {
     color: themas.colors.white,
-    fontSize: 16,
     fontWeight: "bold",
+    fontSize: 16,
   },
-  backButton: {
-    alignItems: "center",
-    padding: 10,
-  },
-  backButtonText: {
+  textBottom: {
+    fontSize: 16,
     color: themas.colors.gray,
-    fontSize: 14,
+    textAlign: "center",
+    marginTop: 15,
   },
 });
+
