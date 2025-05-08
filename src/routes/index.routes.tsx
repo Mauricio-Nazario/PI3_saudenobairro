@@ -6,6 +6,7 @@ import Agendamento from "../pages/agendamento";
 import SenhaScreen from "../pages/senha";
 import Home from "../pages/home";
 import Perfil from "../pages/perfil";
+import Historico from "../pages/historico"; // ✅ Adicione esta linha
 import { RootStackParamList } from "../@types/navigation";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -29,9 +30,9 @@ export default function Routes() {
         name="Perfil" 
         component={Perfil}
         options={{ 
-          headerShown:'True',
+          headerShown: true, // Corrigido de 'True' para booleano
           title: 'Meu Perfil', 
-          headerBackTitle:'Voltar',
+          headerBackTitle: 'Voltar',
         }}
       />
       <Stack.Screen 
@@ -40,6 +41,15 @@ export default function Routes() {
         options={{
           headerShown: true,
           title: 'Agendar Consulta',
+          headerBackTitle: 'Voltar',
+        }}
+      />
+      <Stack.Screen 
+        name="Historico" 
+        component={Historico}
+        options={{
+          headerShown: true,
+          title: 'Histórico de Consultas',
           headerBackTitle: 'Voltar',
         }}
       />

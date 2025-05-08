@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "agendaubs",
+    "name": "Saúde no Bairro",
     "slug": "agendaubs",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,9 +13,14 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.saudenobairro.agendaubs",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
+      "package": "com.saudenobairro.agendaubs",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -23,6 +28,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7b21e523-8da3-4cc4-b599-43ea6d31a4c1"
+      }
+    },
+    "owner": "mauricionazario"
   }
 }

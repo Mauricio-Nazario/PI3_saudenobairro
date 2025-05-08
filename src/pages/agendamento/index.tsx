@@ -8,16 +8,24 @@ import {
   Platform,
   KeyboardAvoidingView,
   ScrollView,
+  Alert
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CalendarPicker from "react-native-calendar-picker";
 import { Picker } from "@react-native-picker/picker";
 import { MaterialIcons } from "@expo/vector-icons";
+import { getAuth } from "firebase/auth";
+import {
+  collection,
+  addDoc,
+  Timestamp
+} from "firebase/firestore";
+
 import { style } from "./styles";
 import { themas } from "../../global/themes";
 import Logo from "../../assets/logo.png";
-
+import { db } from "../../services/fireBaseConfig";
 
 type RootStackParamList = {
   Home: undefined;
@@ -43,14 +51,38 @@ export default function Agendamento() {
     "14:00", "15:00", "16:00", "17:00"
   ];
 
-  const handleConfirmar = () => {
-    console.log({
-      data: selectedDate?.toISOString(),
-      horario: selectedTime,
-      especialidade,
-      medico,
-    });
-    navigation.navigate("Home");
+  const handleConfirmar = async () => {
+    if (!selectedDate || !selectedTime || !especialidade || !medico) {
+      Alert.alert("Atenção", "Preencha todos os campos para agendar.");
+      return;
+    }
+
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      Alert.alert("Erro", "Usuário não autenticado.");
+      return;
+    }
+
+    try {
+      const dataFormatada = selectedDate.toISOString().split("T")[0]; // YYYY-MM-DD
+
+      await addDoc(collection(db, "agendamentos"), {
+        uid: user.uid,
+        data: dataFormatada,
+        horario: selectedTime,
+        especialidade,
+        medico,
+        criadoEm: Timestamp.now()
+      });
+
+      Alert.alert("Sucesso", "Consulta agendada com sucesso!");
+      navigation.navigate("Home");
+    } catch (error) {
+      console.error("Erro ao agendar:", error);
+      Alert.alert("Erro", "Não foi possível agendar a consulta.");
+    }
   };
 
   return (
@@ -173,7 +205,6 @@ export default function Agendamento() {
             <Text style={style.textButton}>Confirmar Agendamento</Text>
           </TouchableOpacity>
 
-          {/* BOTÃO ATUALIZADO AQUI ↓ */}
           <TouchableOpacity
             style={style.backButton}
             onPress={() => navigation.navigate('Home')}
@@ -185,5 +216,6 @@ export default function Agendamento() {
     </KeyboardAvoidingView>
   );
 }
+
 
 

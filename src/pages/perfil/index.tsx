@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  Image, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
   ScrollView,
   Alert,
   ActivityIndicator
@@ -16,9 +16,29 @@ import { styles } from './styles';
 import { themas } from '../../global/themes';
 import { Input } from '../../components/input';
 
+// Firebase
+import { auth, db, storage } from '../../services/fireBaseConfig';
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  collection,
+  query,
+  where,
+  getDocs
+} from 'firebase/firestore';
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL
+} from 'firebase/storage';
+import { signOut } from 'firebase/auth';
+import uuid from 'react-native-uuid';
+
 export default function Perfil() {
   const navigation = useNavigation<ProfileScreenNavigationProp>();
   const [loading, setLoading] = useState(false);
+  const [documentId, setDocumentId] = useState('');
   const [userData, setUserData] = useState({
     name: '',
     email: '',
@@ -27,6 +47,7 @@ export default function Perfil() {
     photo: null as string | null
   });
 
+  const uid = auth.currentUser?.uid;
 
   useEffect(() => {
     (async () => {
@@ -36,6 +57,37 @@ export default function Perfil() {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    if (!uid) return;
+    setLoading(true);
+    const fetchData = async () => {
+      try {
+        const q = query(
+          collection(db, 'usuarios_detalhes'),
+          where('uid', '==', uid)
+        );
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          const docSnap = querySnapshot.docs[0];
+          setUserData({
+            name: docSnap.data().nome || '',
+            email: docSnap.data().email || '',
+            phone: docSnap.data().telefone || '',
+            birthDate: docSnap.data().dataNascimento || '',
+            photo: docSnap.data().photo || null
+          });
+          setDocumentId(docSnap.id);
+        }
+      } catch (error) {
+        Alert.alert('Erro', 'Não foi possível carregar seus dados');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [uid]);
 
   const handleSelectPhoto = async () => {
     try {
@@ -47,35 +99,81 @@ export default function Perfil() {
       });
 
       if (!result.canceled) {
-        setUserData({ ...userData, photo: result.assets[0].uri });
+        const imageUri = result.assets[0].uri;
+        setLoading(true);
+
+        const response = await fetch(imageUri);
+        const blob = await response.blob();
+
+        const imageId = uuid.v4();
+        const imageRef = ref(storage, `fotosPerfil/${imageId}`);
+
+        await uploadBytes(imageRef, blob);
+
+        const downloadUrl = await getDownloadURL(imageRef);
+
+        setUserData({ ...userData, photo: downloadUrl });
+
+        Alert.alert('Foto atualizada com sucesso!');
       }
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível selecionar a imagem');
+      console.error(error);
+      Alert.alert('Erro', 'Não foi possível selecionar ou enviar a imagem');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleUpdateProfile = () => {
+  const handleUpdateProfile = async () => {
+    if (!documentId) return;
+
     setLoading(true);
-   
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const docRef = doc(db, 'usuarios_detalhes', documentId);
+      await updateDoc(docRef, {
+        nome: userData.name,
+        email: userData.email,
+        telefone: userData.phone,
+        dataNascimento: userData.birthDate,
+        photo: userData.photo || null
+      });
+
       Alert.alert('Sucesso', 'Perfil atualizado com sucesso!');
       navigation.goBack();
-    }, 1500);
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Erro', 'Não foi possível atualizar seu perfil.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }]
+      });
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível sair da conta.');
+    }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-     
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialIcons name="arrow-back" size={24} color={themas.colors.primary} />
         </TouchableOpacity>
+
         <Text style={styles.title}>Meu Perfil</Text>
-        <View style={{ width: 24 }} /> 
+
+        <TouchableOpacity onPress={handleLogout}>
+          <MaterialIcons name="logout" size={24} color={themas.colors.primary} />
+        </TouchableOpacity>
       </View>
 
-  
       <View style={styles.photoContainer}>
         <TouchableOpacity onPress={handleSelectPhoto}>
           {userData.photo ? (
@@ -91,7 +189,6 @@ export default function Perfil() {
         </TouchableOpacity>
       </View>
 
-     
       <View style={styles.form}>
         <Input
           label="Nome completo"
@@ -100,7 +197,7 @@ export default function Perfil() {
           icon="person"
           placeholder="Digite seu nome completo"
         />
-        
+
         <Input
           label="E-mail"
           value={userData.email}
@@ -109,7 +206,7 @@ export default function Perfil() {
           keyboardType="email-address"
           placeholder="seu@email.com"
         />
-        
+
         <Input
           label="Telefone"
           value={userData.phone}
@@ -118,7 +215,7 @@ export default function Perfil() {
           keyboardType="phone-pad"
           placeholder="(00) 00000-0000"
         />
-        
+
         <Input
           label="Data de nascimento"
           value={userData.birthDate}
@@ -128,9 +225,8 @@ export default function Perfil() {
         />
       </View>
 
-   
-      <TouchableOpacity 
-        style={styles.saveButton} 
+      <TouchableOpacity
+        style={styles.saveButton}
         onPress={handleUpdateProfile}
         disabled={loading}
       >

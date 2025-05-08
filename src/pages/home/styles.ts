@@ -6,29 +6,36 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: themas.colors.background,
     padding: 16,
+    marginTop: 20,
   },
   header: {
+    flexDirection: 'row', // alinhamento horizontal
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 20,
   },
   logo: {
-    width: 80,
-    height: 80,
+    width: 50,
+    height: 50,
     resizeMode: 'contain',
-    marginBottom: 40,
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: themas.colors.primary,
   },
+  subtitle: {
+    fontSize: 14,
+    color: themas.colors.gray,
+  },
   cardsContainer: {
+    flexDirection: 'row',
     marginBottom: 20,
   },
   card: {
     width: 120,
     height: 120,
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -43,6 +50,7 @@ export const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 14,
     textAlign: 'center',
+    color: themas.colors.text,
   },
   sectionTitle: {
     fontSize: 18,
@@ -51,7 +59,7 @@ export const styles = StyleSheet.create({
     color: themas.colors.text,
   },
   consultaCard: {
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,
@@ -68,6 +76,7 @@ export const styles = StyleSheet.create({
   consultaMedico: {
     fontSize: 16,
     marginTop: 5,
+    color: themas.colors.text,
   },
   consultaEspecialidade: {
     color: themas.colors.gray,
@@ -79,7 +88,7 @@ export const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 14,
   },
-  fab: { 
+  fab: {
     position: 'absolute',
     right: 25,
     bottom: 25,
@@ -96,3 +105,5 @@ export const styles = StyleSheet.create({
     shadowRadius: 3.84,
   },
 });
+
+

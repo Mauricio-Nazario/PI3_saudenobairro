@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { 
-  Text, 
+import {
+  Text,
   View,
   Image,
   TextInput,
@@ -17,7 +17,9 @@ import { styles } from "./styles";
 import Logo from '../../assets/logo.png';
 import { themas } from "../../global/themes";
 
-{/* Definir os tipos de navegação */}
+// Firebase Auth
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
 type RootStackParamList = {
   Login: undefined;
   Cadastro: undefined;
@@ -31,7 +33,6 @@ type LoginScreenNavigationProp = NativeStackNavigationProp<
 >;
 
 export default function Login() {
-
   const navigation = useNavigation<LoginScreenNavigationProp>();
 
   const [email, setEmail] = useState('');
@@ -40,30 +41,42 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   async function handleLogin() {
+    if (!email || !password) {
+      return Alert.alert('Atenção', 'Preencha todos os campos');
+    }
+
+    if (!email.includes('@') || !email.includes('.')) {
+      return Alert.alert('Atenção', 'Informe um email válido');
+    }
+
+    setLoading(true);
+    const auth = getAuth();
+
     try {
-      setLoading(true);
-      
-      if (!email || !password) {
-        Alert.alert('Atenção', 'Preencha todos os campos');
-        setLoading(false);
-        return;
+      // 🔐 Login com Firebase Auth
+      await signInWithEmailAndPassword(auth, email, password);
+
+      // ✅ Sucesso: ir para a Home
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home' }]
+      });
+
+    } catch (error: any) {
+      console.error("Erro ao fazer login:", error);
+      let mensagem = 'Erro ao fazer login. Verifique suas credenciais.';
+
+      if (error.code === 'auth/user-not-found') {
+        mensagem = 'Usuário não encontrado.';
+      } else if (error.code === 'auth/wrong-password') {
+        mensagem = 'Senha incorreta.';
+      } else if (error.code === 'auth/invalid-email') {
+        mensagem = 'E-mail inválido.';
       }
 
-      if (!email.includes('@') || !email.includes('.')) {
-        Alert.alert('Atenção', 'Informe um email válido');
-        setLoading(false);
-        return;
-      }
-
-      // Simulação de chamada API
-      setTimeout(() => {
-        setLoading(false);
-        {/* Alterado para navegar para Home */}
-        navigation.navigate('Home');
-      }, 1500);
-    } catch (error) {
+      Alert.alert('Erro', mensagem);
+    } finally {
       setLoading(false);
-      Alert.alert('Erro', 'Falha ao fazer login');
     }
   }
 
@@ -73,18 +86,18 @@ export default function Login() {
       style={styles.container}
     >
       <View style={styles.boxTop}>
-        <Image 
+        <Image
           source={Logo}
           style={styles.logo}
           resizeMode="contain"
         />
         <Text style={styles.text}>Saúde no bairro</Text>
       </View>
-      
+
       <View style={styles.boxMid}>
         <Text style={styles.titleInput}>ENDEREÇO DE E-MAIL</Text>
         <View style={styles.boxInput}>
-          <TextInput 
+          <TextInput
             style={styles.input}
             value={email}
             onChangeText={setEmail}
@@ -99,10 +112,10 @@ export default function Login() {
             color={themas.colors.gray}
           />
         </View>
-        
+
         <Text style={styles.titleInput}>SENHA</Text>
         <View style={styles.boxInput}>
-          <TextInput 
+          <TextInput
             style={styles.input}
             value={password}
             onChangeText={setPassword}
@@ -120,10 +133,10 @@ export default function Login() {
           </TouchableOpacity>
         </View>
       </View>
-      
+
       <View style={styles.boxBottom}>
-        <TouchableOpacity 
-          style={styles.button} 
+        <TouchableOpacity
+          style={styles.button}
           onPress={handleLogin}
           disabled={loading}
         >
@@ -134,7 +147,7 @@ export default function Login() {
           )}
         </TouchableOpacity>
       </View>
-      
+
       <View style={styles.footer}>
         <Text style={styles.textBottom}>Não tem conta? </Text>
         <TouchableOpacity onPress={() => navigation.navigate("Cadastro")}>

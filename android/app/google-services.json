@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1091679366649",
+    "project_id": "saudenobairro-c2f40",
+    "storage_bucket": "saudenobairro-c2f40.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1091679366649:android:5e4db4c4eaff2c0a74a128",
+        "android_client_info": {
+          "package_name": "com.saudenobairro.agendaubs"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDv2_0pHKs7VEbdmavU0fKMMPSfEXnoTJo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

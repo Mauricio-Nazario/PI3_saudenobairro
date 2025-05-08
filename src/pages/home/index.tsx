@@ -1,59 +1,133 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
-import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Alert
+} from 'react-native';
+import {
+  MaterialIcons,
+  MaterialCommunityIcons
+} from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { themas } from '../../global/themes'; 
-import { styles } from "./styles";
+import { getAuth, signOut } from 'firebase/auth';
+import {
+  collection,
+  query,
+  where,
+  onSnapshot
+} from 'firebase/firestore';
+
+import { themas } from '../../global/themes';
+import { styles } from './styles';
+import Logo from '../../assets/logo.png';
+import { db } from '../../services/fireBaseConfig';
+
+type Consulta = {
+  id: string;
+  data: string;
+  horario: string;
+  medico: string;
+  especialidade: string;
+};
 
 export default function Home() {
   const navigation = useNavigation();
+  const [consultas, setConsultas] = useState<Consulta[]>([]);
+  const [userEmail, setUserEmail] = useState<string>('');
 
-  const proximasConsultas = [
-    { id: 1, data: '15/10/2025', horario: '14:00', medico: 'Dr. Silva', especialidade: 'Cardiologia' },
-    { id: 2, data: '20/10/2025', horario: '10:30', medico: 'Dra. Costa', especialidade: 'Dermatologia' }
-  ];
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  useEffect(() => {
+    if (user) {
+      setUserEmail(user.email || '');
+
+      const hoje = new Date().toISOString().split('T')[0]; // formato: YYYY-MM-DD
+      const q = query(
+        collection(db, 'agendamentos'),
+        where('uid', '==', user.uid),
+        where('data', '>=', hoje)
+      );
+
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const data = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...(doc.data() as Omit<Consulta, 'id'>),
+        }));
+        setConsultas(data.sort((a, b) => a.data.localeCompare(b.data)));
+      });
+
+      return () => unsubscribe();
+    }
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }]
+      });
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível sair.");
+    }
+  };
 
   return (
     <View style={styles.container}>
-      {/* 1. Cabeçalho Simples */}
+      {/* Cabeçalho */}
       <View style={styles.header}>
-        <Image 
-          source={require('../../assets/logo.png')} 
-          style={styles.logo} 
-          resizeMode='contain'
-        />
-        <Text style={styles.title}>Bem-vindo ao Saúde no Bairro</Text>
+        <Image source={Logo} style={styles.logo} resizeMode="contain" />
+        <View>
+          <Text style={styles.title}>Bem-vindo!</Text>
+          {userEmail !== '' && (
+            <Text style={styles.subtitle}>{userEmail}</Text>
+          )}
+        </View>
+        <TouchableOpacity onPress={handleLogout}>
+          <MaterialIcons name="logout" size={24} color={themas.colors.primary} />
+        </TouchableOpacity>
       </View>
 
-      {/* 2. Cards de Acesso Rápido (Horizontal) */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.cardsContainer}>
-        <TouchableOpacity 
-          style={styles.card} 
+      {/* Acesso Rápido */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.cardsContainer}
+      >
+        <TouchableOpacity
+          style={styles.card}
           onPress={() => navigation.navigate('Agendamento' as never)}
         >
           <MaterialCommunityIcons name="calendar-plus" size={32} color={themas.colors.primary} />
           <Text style={styles.cardText}>Agendar Consulta</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.card}>
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => navigation.navigate('Historico' as never)}
+        >
           <MaterialIcons name="history" size={32} color={themas.colors.primary} />
           <Text style={styles.cardText}>Histórico</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
-            style={styles.card}
-            onPress={() => navigation.navigate('Perfil' as never)}
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => navigation.navigate('Perfil' as never)}
         >
           <MaterialIcons name="person" size={32} color={themas.colors.primary} />
           <Text style={styles.cardText}>Meu Perfil</Text>
         </TouchableOpacity>
       </ScrollView>
 
-      {/* 3. Próximas Consultas */}
+      {/* Próximas Consultas */}
       <Text style={styles.sectionTitle}>Próximas Consultas</Text>
-      
-      {proximasConsultas.length > 0 ? (
-        proximasConsultas.map(consulta => (
+
+      {consultas.length > 0 ? (
+        consultas.map((consulta) => (
           <View key={consulta.id} style={styles.consultaCard}>
             <Text style={styles.consultaData}>{consulta.data} às {consulta.horario}</Text>
             <Text style={styles.consultaMedico}>{consulta.medico}</Text>
@@ -64,8 +138,8 @@ export default function Home() {
         <Text style={styles.emptyText}>Nenhuma consulta agendada</Text>
       )}
 
-      {/* 4. Botão Fixo (Opcional) */}
-      <TouchableOpacity 
+      {/* Botão flutuante para novo agendamento */}
+      <TouchableOpacity
         style={styles.fab}
         onPress={() => navigation.navigate('Agendamento' as never)}
       >
@@ -74,3 +148,6 @@ export default function Home() {
     </View>
   );
 }
+
+
+
