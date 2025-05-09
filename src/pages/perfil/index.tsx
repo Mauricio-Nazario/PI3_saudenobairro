@@ -16,23 +16,8 @@ import { styles } from './styles';
 import { themas } from '../../global/themes';
 import { Input } from '../../components/input';
 
-// Firebase
-import { auth, db, storage } from '../../services/fireBaseConfig';
-import {
-  doc,
-  getDoc,
-  updateDoc,
-  collection,
-  query,
-  where,
-  getDocs
-} from 'firebase/firestore';
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from 'firebase/storage';
-import { signOut } from 'firebase/auth';
+
+
 import uuid from 'react-native-uuid';
 
 export default function Perfil() {
@@ -47,8 +32,6 @@ export default function Perfil() {
     photo: null as string | null
   });
 
-  const uid = auth.currentUser?.uid;
-
   useEffect(() => {
     (async () => {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -59,26 +42,10 @@ export default function Perfil() {
   }, []);
 
   useEffect(() => {
-    if (!uid) return;
     setLoading(true);
     const fetchData = async () => {
       try {
-        const q = query(
-          collection(db, 'usuarios_detalhes'),
-          where('uid', '==', uid)
-        );
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-          const docSnap = querySnapshot.docs[0];
-          setUserData({
-            name: docSnap.data().nome || '',
-            email: docSnap.data().email || '',
-            phone: docSnap.data().telefone || '',
-            birthDate: docSnap.data().dataNascimento || '',
-            photo: docSnap.data().photo || null
-          });
-          setDocumentId(docSnap.id);
-        }
+
       } catch (error) {
         Alert.alert('Erro', 'Não foi possível carregar seus dados');
       } finally {
@@ -87,7 +54,7 @@ export default function Perfil() {
     };
 
     fetchData();
-  }, [uid]);
+  });
 
   const handleSelectPhoto = async () => {
     try {
@@ -105,14 +72,7 @@ export default function Perfil() {
         const response = await fetch(imageUri);
         const blob = await response.blob();
 
-        const imageId = uuid.v4();
-        const imageRef = ref(storage, `fotosPerfil/${imageId}`);
-
-        await uploadBytes(imageRef, blob);
-
-        const downloadUrl = await getDownloadURL(imageRef);
-
-        setUserData({ ...userData, photo: downloadUrl });
+        setUserData({ ...userData });
 
         Alert.alert('Foto atualizada com sucesso!');
       }
@@ -129,14 +89,7 @@ export default function Perfil() {
 
     setLoading(true);
     try {
-      const docRef = doc(db, 'usuarios_detalhes', documentId);
-      await updateDoc(docRef, {
-        nome: userData.name,
-        email: userData.email,
-        telefone: userData.phone,
-        dataNascimento: userData.birthDate,
-        photo: userData.photo || null
-      });
+
 
       Alert.alert('Sucesso', 'Perfil atualizado com sucesso!');
       navigation.goBack();
@@ -150,7 +103,6 @@ export default function Perfil() {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
       navigation.reset({
         index: 0,
         routes: [{ name: 'Login' }]

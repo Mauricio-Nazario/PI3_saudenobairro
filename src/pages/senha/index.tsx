@@ -14,9 +14,6 @@ import { style } from "../senha/styles";
 import { themas } from "../../global/themes";
 
 // Firebase
-import { auth, db } from "../../services/fireBaseConfig";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { collection, addDoc } from "firebase/firestore";
 
 type RouteParams = {
   dadosCadastro: {
@@ -75,16 +72,6 @@ export default function SenhaScreen() {
     setLoading(true);
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-      const { uid } = userCredential.user;
-
-      await addDoc(collection(db, "usuarios_detalhes"), {
-        uid,
-        email,
-        ...dadosCadastro,
-        criadoEm: new Date()
-      });
-
       Alert.alert('Sucesso', 'Cadastro completo!');
       navigation.reset({
         index: 0,
