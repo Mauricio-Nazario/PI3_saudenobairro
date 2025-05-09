@@ -1,12 +1,17 @@
-import { StyleSheet } from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 import { themas } from '../../global/themes';
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: themas.colors.background,
-    padding: 16,
     marginTop: 20,
+  },
+  containerImage: {
+    alignItems: 'center',
+  },
+  logoImage: {
+    width: "100%",
+    height: Dimensions.get('window').height / 3,
   },
   header: {
     flexDirection: 'row', // alinhamento horizontal
@@ -29,8 +34,8 @@ export const styles = StyleSheet.create({
     color: themas.colors.gray,
   },
   cardsContainer: {
-    flexDirection: 'row',
     marginBottom: 20,
+    padding: 5
   },
   card: {
     width: 120,

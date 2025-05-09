@@ -18,7 +18,6 @@ import Logo from '../../assets/logo.png';
 import { themas } from "../../global/themes";
 
 // Firebase Auth
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 type RootStackParamList = {
   Login: undefined;
@@ -50,11 +49,9 @@ export default function Login() {
     }
 
     setLoading(true);
-    const auth = getAuth();
 
     try {
       // 🔐 Login com Firebase Auth
-      await signInWithEmailAndPassword(auth, email, password);
 
       // ✅ Sucesso: ir para a Home
       navigation.reset({
