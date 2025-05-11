@@ -15,17 +15,10 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CalendarPicker from "react-native-calendar-picker";
 import { Picker } from "@react-native-picker/picker";
 import { MaterialIcons } from "@expo/vector-icons";
-import { getAuth } from "firebase/auth";
-import {
-  collection,
-  addDoc,
-  Timestamp
-} from "firebase/firestore";
-
 import { style } from "./styles";
 import { themas } from "../../global/themes";
 import Logo from "../../assets/logo.png";
-import { db } from "../../services/fireBaseConfig";
+import CreateBookingAction from "../../services/booking/CreateBookingAction";
 
 type RootStackParamList = {
   Home: undefined;
@@ -57,26 +50,18 @@ export default function Agendamento() {
       return;
     }
 
-    const auth = getAuth();
-    const user = auth.currentUser;
-
-    if (!user) {
-      Alert.alert("Erro", "Usuário não autenticado.");
-      return;
-    }
-
     try {
       const dataFormatada = selectedDate.toISOString().split("T")[0]; // YYYY-MM-DD
-
-      await addDoc(collection(db, "agendamentos"), {
-        uid: user.uid,
-        data: dataFormatada,
-        horario: selectedTime,
-        especialidade,
-        medico,
-        criadoEm: Timestamp.now()
-      });
-
+console.log(dataFormatada);
+      CreateBookingAction.create({
+        date: dataFormatada,
+        hour: selectedTime,
+        specialty: especialidade,
+        doctorName: medico
+      }).then(
+          () => alert("Agendamento atualizado com sucesso!"),
+          (error) => alert("Erro ao salvar agendamento: " + error)
+      );
       Alert.alert("Sucesso", "Consulta agendada com sucesso!");
       navigation.navigate("Home");
     } catch (error) {
